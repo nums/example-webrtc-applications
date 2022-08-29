@@ -81,6 +81,8 @@ func CreatePipeline(codecName string, tracks []*webrtc.TrackLocalStaticSample, p
 	default:
 		panic("Unhandled codec " + codecName)
 	}
+	
+	fmt.Printf("pipeline : ", pipelineStr)
 
 	pipelineStrUnsafe := C.CString(pipelineStr)
 	defer C.free(unsafe.Pointer(pipelineStrUnsafe))
