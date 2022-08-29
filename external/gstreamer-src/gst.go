@@ -59,7 +59,7 @@ func CreatePipeline(codecName string, tracks []*webrtc.TrackLocalStaticSample, p
 	//	clockRate = videoClockRate
 		
 	case "h264":
-		pipelineStr = pipelineSrc + " ! video/x-raw,format=I420 ! nvh264enc bitrate=2000 rc-mode=cbr gop-size=-1 qos=true preset=low-latency-hq ! " + pipelineStr
+		pipelineStr = pipelineSrc + " ! video/x-raw,format=I420,framerate=30/1 ! nvh264enc bitrate=2000 rc-mode=cbr gop-size=30 bframes=0 qos=true preset=low-latency-hq stream-format=byte-stream ! video/x-h264,profile=high ! " + pipelineStr
 		clockRate = videoClockRate
 
 	case "opus":
@@ -120,6 +120,7 @@ func goHandlePipelineBuffer(buffer unsafe.Pointer, bufferLen C.int, duration C.i
 
 	if ok {
 		for _, t := range pipeline.tracks {
+			fmt.Printf("buffer : ", bufferLen, "duration", duration)
 			if err := t.WriteSample(media.Sample{Data: C.GoBytes(buffer, bufferLen), Duration: time.Duration(duration)}); err != nil {
 				panic(err)
 			}
